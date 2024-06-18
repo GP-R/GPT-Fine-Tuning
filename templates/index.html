@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        .user-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .user-message {
+            text-align: right;
+        }
+        .bot-message {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chatbot</h1>
+        <div class="chat-box" id="chat-box">
+        </div>
+        <input type="text" class="user-input" id="user-input" placeholder="Type a message...">
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#user-input').keypress(function(e) {
+                if (e.which == 13) {
+                    var userInput = $('#user-input').val();
+                    if (userInput.trim() !== '') {
+                        $('#chat-box').append('<div class="message user-message">' + userInput + '</div>');
+                        $('#user-input').val('');
+
+                        $.ajax({
+                            url: '/get_response',
+                            method: 'POST',
+                            data: { user_input: userInput },
+                            success: function(response) {
+                                $('#chat-box').append('<div class="message bot-message">' + response.response + '</div>');
+                                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
